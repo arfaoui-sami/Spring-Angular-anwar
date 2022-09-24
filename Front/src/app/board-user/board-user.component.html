@@ -1,0 +1,83 @@
+
+<nav class="navbar navbar-expand navbar-dark bg-dark" target= "#navbarSupportedContent"  >
+  <a href="#" class="navbar-brand">Anwar</a>
+  <ul class="navbar-nav mr-auto" routerLinkActive="active">
+    <li class="nav-item">
+      <a  class="nav-link" routerLink="home">Home </a>
+    </li>
+    <li class="nav-item" *ngIf="showAdminBoard">
+      <a class="nav-link" routerLink="/admin">Admin Board</a>
+    </li>
+    <li class="nav-item" *ngIf="showUserBoard">
+      <a  class="nav-link" routerLink="/user">User Board</a>
+    </li>
+    <li class="nav-item">
+      <a  class="nav-link" *ngIf="isLoggedIn" routerLink="/user">Historique</a>
+    </li>
+  </ul>
+
+  <ul class="navbar-nav ml-auto" *ngIf="!isLoggedIn">
+    <li class="nav-item">
+      <a  class="nav-link" routerLink="/register">Sign Up</a>
+    </li>
+    <li class="nav-item">
+      <a  class="nav-link" routerLink="/login">Login</a>
+    </li>
+  </ul>
+
+  <ul class="navbar-nav ml-auto" *ngIf="isLoggedIn">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="profile">{{ username }}</a>
+    </li>
+    <li class="nav-item">
+      <a  class="nav-link" (click)="logout()">LogOut</a>
+    </li>
+  </ul>
+</nav>
+    <header class="jumbotron">
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <a (click)="export()" class="btn btn-primary tooltips" style="margin-bottom: 10px;margin-left: 28px;" data-placement="top" data-original-title=""><i class="fa fa-file"> Export </i></a>
+      </div>
+      <div class="col-md-4">
+
+
+        <form action="" style=" float: right;margin-right: 28px;">
+          <label style="font-weight: 500;">
+            filter by
+
+            <input type="date" name="date"[(ngModel)]="filtertext" (search)="dateselect"  >
+<button (click)="fetchdateselct()">search</button>
+          </label>
+        </form>
+      </div>
+
+    </div>
+    <div id="export">
+      <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>sensor</th>
+          <th>value1</th>
+          <th>date</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let User of users">
+          <td><span>{{User.id}}</span></td>
+          <td><span>{{User.sensor}}</span></td>
+          <td><span>{{User.value1}}</span></td>
+          <td><span>{{ formatdate(User.date) | date:'dd/MM/yyyy HH:mm:ss '}}</span></td>
+
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</header>
+
+

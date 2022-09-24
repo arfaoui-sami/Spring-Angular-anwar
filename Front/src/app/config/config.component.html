@@ -1,0 +1,202 @@
+<nav class="navbar navbar-expand navbar-dark bg-dark" target= "#navbarSupportedContent"  >
+  <a href="#" class="navbar-brand">Anwar</a>
+  <ul class="navbar-nav mr-auto" routerLinkActive="active">
+    <li class="nav-item">
+      <a  class="nav-link" routerLink="/home">Home </a>
+    </li>
+    <li class="nav-item" *ngIf="showAdminBoard">
+      <a  class="nav-link" routerLink="/admin">Admin Board</a>
+    </li>
+    <li class="nav-item" *ngIf="showUserBoard">
+      <a  class="nav-link" routerLink="/admin">User Board</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" *ngIf="isLoggedIn" routerLink="/admin">User</a>
+    </li>
+    <li class="nav-item">
+     <a  class="nav-link" *ngIf="isLoggedIn" routerLink="/config">Configuration</a>
+   </li>
+  </ul>
+
+  <ul class="navbar-nav ml-auto" *ngIf="!isLoggedIn">
+    <li class="nav-item">
+      <a href="/register" class="nav-link" routerLink="register">Sign Up</a>
+    </li>
+    <li class="nav-item">
+      <a href="/login" class="nav-link" routerLink="login">Login</a>
+    </li>
+  </ul>
+
+  <ul class="navbar-nav ml-auto" *ngIf="isLoggedIn">
+    <li class="nav-item">
+      <a href="/profile" class="nav-link" routerLink="profile">{{ username }}</a>
+    </li>
+    <li class="nav-item">
+      <a href class="nav-link" (click)="logout()">LogOut</a>
+    </li>
+  </ul>
+</nav>
+<header class="jumbotron"> 
+    
+  <div class="container"  id="main-container">
+  
+        <div class="row">
+            <div style="margin-bottom:50px;margin-left: auto;">
+               <a  (click)="onOpenModal(null, 'add')"  class="btn btn-primary tooltips" data-placement="top" data-original-title=""><i class="fa fa-plus"></i></a>
+            </div>
+            <div class="modal fade" id="addMaterielModal" tabindex="-1" role="dialog" aria-labelledby="addMaterielModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                   <div class="modal-header">
+                      <h5 class="modal-title" id="addMaterielModal">Add Materiel</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                      </button>
+                   </div>
+                   <div class="modal-body">
+                      <form #addForm="ngForm" (ngSubmit)="onAddMateriel(addForm)">
+                        <div class="form-group">
+                            <label>Type of card </label>
+                           <select name="module" class="form-control" ngModel="{{editMateriel?.micro}}">
+                
+                            <option value=""></option>
+                              <option value="Arduino">Arduino</option>
+                              <option value="NodeMCU">NodeMCU</option>
+                  
+                            </select>
+                          </div>
+                      <div class="form-group">
+                        <label>Communication module</label>
+                        <select name="module" class="form-control" ngModel="{{editMateriel?.module}}">
+                      
+                          <option value="WIFI">WIFI</option>
+                          <option value="LORA">LORA</option>
+                       
+                          </select>
+                      </div>
+                                 
+                      
+                      <div class="form-group">
+                         <label for="carte">Raspberry</label>
+                         <input type="text" ngModel name="carte" class="form-control" id="carte" placeholder="Raspberry" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="capteur">Sensor</label>
+                          <input type="text" ngModel name="capteur" class="form-control" id="capteur" placeholder="Sensor" required>
+                       </div>
+                    
+                      <div class="modal-footer">
+                         <button type="button" id="add-materiel-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                         <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Save </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              </div>
+         </div>
+    <table class="table table-bordered table-striped">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Type of card </th>
+        <th>Communication module </th>
+        <th>Raspberry</th>
+        <th>Sensor</th>
+        <th>Action</th> 
+      </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let Materiel of materiels">
+          <td><span>{{Materiel.id}}</span></td>
+          <td><span>{{Materiel.micro}}</span></td>
+          <td><span>{{Materiel.module}}</span></td>
+          <td><span>{{Materiel.carte}}</span></td>
+          <td><span>{{Materiel.capteur}}</span></td>
+         
+         
+          <td>
+            <div class="btn-group btn-group-sm">
+                <a (click)="onOpenModal(Materiel, 'edit')" class="btn btn-primary tooltips" data-placement="top" data-original-title="Edit"style="margin-right:10px"><i class="fa fa-pencil"></i> </a>
+                <a  (click)="onOpenModal(Materiel, 'delete')" class="btn btn-secondary tooltips" data-placement="top" data-original-title="Delete" style="background: red; border-color: red;"><i class="fa fa-trash"></i></a>
+            </div>   
+          </td>  
+         </tr>
+      </tbody>
+    </table>
+    <div class="modal fade" id="updateMaterielModal" tabindex="-1" role="dialog" aria-labelledby="materielEditModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="updateMaterielModalLabel">Edit Materiel {{editMateriel?.id}}</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body">
+               <form #editForm="ngForm">
+                  <div class="form-group">
+                      <label>Type of card</label>
+                     <select name="micro" class="form-control" ngModel="{{editMateriel?.micro}}">
+            
+                      <option value="Arduino">Arduino</option>
+                      <option value="NodeMCU">NodeMCU</option>
+                    
+                     </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Communication module</label>
+                    <select name="module" class="form-control" ngModel="{{editMateriel?.module}}">
+            
+                      <option value="WIFI">WIFI</option>
+                      <option value="LORA">LORA</option>
+                      
+                    </select>
+                  </div>
+  
+               
+                  <div class="form-group">
+                      <label>Raspberry</label>
+                      <input type="text" ngModel="{{editMateriel?.carte}}" name="carte" class="form-control" id="carte" placeholder="Raspberry">
+                   </div>
+                  <div class="form-group">
+                      <label>Sensor</label>
+                      <input type="text" ngModel="{{editMateriel?.capteur}}" name="capteur" class="form-control" id="capteur" placeholder="Sensor">
+                   </div>
+                 
+                  <div class="modal-footer">
+                     <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                     <button (click)="onUpdateMateriel(editForm.value)" data-dismiss="modal" class="btn btn-primary"> Edit</button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+    </div>
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteMaterielModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModelLabel">Delete material</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to delete material {{deleteMateriel?.id}}?</p>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                  <button (click)="onDeleteMateriel(deleteMateriel?.id)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+              </div>
+            </div>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+</header>
+  
+
+
+
